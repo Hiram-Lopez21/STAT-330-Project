@@ -1,59 +1,93 @@
 ---
-title: "Replace with a specific, informative title"
-subtitle: "Replace with one sentence that tells readers why the question matters"
-author: "Replace with all group members' names"
+title: "Factors Associated with Anxiety Levels"
+subtitle: "Exploring how lifestyle habits are associated with anxiety levels"
+author: "Nada Amer, Hiram Lopez Mendoza, Lucero Otero"
 date: last-modified
-description: "Replace with a brief description for link previews."
+description: "A regression case study examining the relationship between lifestyle habits and anxiety levels."
 ---
 
 **Narrative word count:** Replace with a number from 750 to 1,000.
 
-::: {.callout-tip}
-This template suggests one way to tell the story. You may rename, combine, or reorder headings and add, remove, or move code chunks. Use plots, tables, selected model output, and prose in whatever combination best communicates your evidence. Keep every required part easy to find, use no more than four primary figures or tables, and delete this note and all bold prompts before submitting.
-:::
 
 ## The question
 
 **In one or two short paragraphs, introduce the setting, audience, focused research question, data source, observational unit, response, important predictors, and one important data limitation. Lead with what makes the question worth answering.**
 
+> Our research question is: How are a person's lifestyle behaviors related to the intensity of their social anxiety? Our intended audience includes clinicians, researchers interested in social anxiety, and individuals experiencing social anxiety. Finding and understanding the association between daily lifestyle behaviors and social anxiety levels can be helpful for understanding how these factors are related. Our findings could also support current and future experimental studies that seek to investigate causal relationships.
+
+> We are using the Social Anxiety Dataset by Zhang (2024), which contains 11,000 observations, with each observation representing a recorded individual. Our response variable is social anxiety level, measured on a scale from 1 to 10. From an initial pool of 11 candidate predictors, we selected five lifestyle behaviors related to personal decisions: sleep hours, physical activity, caffeine intake, alcohol consumption, and diet quality. One important limitation is that the dataset is described as being based on real-world surveys and observational studies, but having gone through preprocessing and cleaning for analytical use. Because of this, the relationships between lifestyle habits and social anxiety may not accurately reflect the relationships we would observe in real life. The creator of the data set strongly recommends using the data for research and educational purposes only, not to diagnose or assign treatment to patients. Nevertheless, with the data available we aim to find the association of our selected lifestyle habits and its associated social stress intensity level. Additionally, the data was collected through self-reported surveys and observational studies, which may result in possible non-response sampling bias if those who chose not to participate in the surveys or observations are significantly different than the sampled population. 
+
+
 ## What the baseline shows
 
-**Describe and justify a simple course-based baseline regression model. Interpret the result that best establishes the rest of the story, including its direction, magnitude, scale, and uncertainty. Explain one limitation or unresolved pattern that motivates deeper analysis.**
+> We fitted a multiple linear regression model to examine the relationship between social anxiety levels and five lifestyle predictors: sleep hours, physical activity, caffeine intake, alcohol consumption, and diet quality.
 
 ```{r}
-# Load packages and data, document preparation, and fit the baseline.
+
+library(tidyverse)
+library(car)
+
+anxiety_data <- read_csv("anxiety.csv")
+summary(anxiety_data)
+
+anxiety_data <- anxiety_data |>
+  rename(
+    anxiety_lvl = `Anxiety Level (1-10)`,
+    sleep_hrs = `Sleep Hours`,
+    physical_activity = `Physical Activity (hrs/week)`,
+    caffeine_intake = `Caffeine Intake (mg/day)`,
+    alcohol_consumption = `Alcohol Consumption (drinks/week)`,
+    diet_quality = `Diet Quality (1-10)`
+  )
+
+anxiety_fit <- lm(
+  anxiety_lvl ~ sleep_hrs + physical_activity +
+    caffeine_intake + alcohol_consumption + diet_quality,
+  data = anxiety_data
+)
+
+summary(anxiety_fit)
+
 ```
 
+> Holding physical activity, caffeine intake, alcohol consumption, and dietary quality constant, an increase in one hour of sleep is associated with a predicted decrease of about 0.6875 points in social anxiety level, on average.
+
+> We are 95% confident that, holding the other predictors constant, each additional hour of sleep is associated with a decrease of between 0.660 and 0.715 points in the mean social anxiety level.
+
+> One possible limitation is multicollinearity, because some lifestyle predictors might be related. For example, caffeine intake could be related to the number of hours slept, and alcohol consumption could also be related to dietary quality. This might make our standard errors bigger and make it harder to interpret each predictor's individual relationship with anxiety levels.
+
 ```{r}
-# Show a primary figure or table only if it helps answer the question.
+
+avPlots(anxiety_fit)
+
 ```
+
+> The added-variable plots show each predictor's relationship with social anxiety levels after accounting for the other predictors in our regression model. Sleep hours appear to have the strongest negative relationship with social anxiety, while caffeine intake shows a positive relationship. Physical activity, alcohol consumption, and diet quality show weaker relationships. 
 
 ## Going beyond the baseline
 
-**Use two STAT 330 method families. Give each part a descriptive heading that states the question or finding, not an assignment label. Explain why you chose each method, how you checked it, and what it adds to the answer.**
-
-### Replace with a question or finding
-
-**Present one method and its most useful evidence.**
+> Since there are different models we could use, we want to use model selection methods to help us decide which model would be best for our research question. We plan to use methods from Selection and Shrinkage, such as best subsets, Ridge, or LASSO, to help us figure out which predictors we should keep in our model.
 
 ```{r}
-# Analysis code for this part.
+# Add model selection analysis for the final project.
 ```
 
-### Replace with another question or finding
+### How accurately can our model predict social anxiety levels?
 
-**Present a method from a different family and its most useful evidence. Combine this with the preceding subsection if that creates a clearer story.**
+> We also plan to use cross-validation from the Validation and Comparison family to see how well our model can predict social anxiety levels. This will help us see how accurate our model is when predicting anxiety levels for new observations that were not used to build the model.
 
 ```{r}
-# Analysis code for this part.
+# Add cross-validation analysis for the final project.
 ```
 
 ## A new direction with AI
 
-**Explain the need revealed by your preliminary course-based work, the extension you implemented with AI support, and what it contributes to the same research question. Show its substantive result on this page and summarize your independent checks. If the extension is an untaught comparator, evaluate it against the core course-based model. Link to the AI-use record instead of placing a transcript here.**
+> The original need was to address a potential multicollinearity, however the AI support helped identified a potential reinterpretation of our response variable. Since the measurement of social anxiety level is not described, the response variable might represent an ordinal variable instead of a continuous variable. For example, an intervals between 1 to 2 and 9 to 10 could differ substantially. This made us question whether treating social anxiety levels as continuous in our original multiple linear regression model was the most appropriate approach. Therefore for the extension we will run an ordinal logistic regression to determine if that would change our conclusions about the association between lifestyle behaviors and social anxiety levels.
+
+> After fitting the ordinal logistic regression model, we will compare its findings with our original model to see whether the relationships we observed remain similar. To verify our extension, we plan to check the proportional-odds assumption using ordinal::nominal_test() and validate the predicted probabilities using predict() to make sure they are between 0 and 1 and sum to 1.
 
 ```{r}
-# Implement the verified extension or show its most useful result.
+# Add ordinal logistic regression analysis for the final project.
 ```
 
 Details are in the [AI-use record](ai-use.qmd).
@@ -61,10 +95,11 @@ Details are in the [AI-use record](ai-use.qmd).
 ## What this means
 
 **Answer the research question directly. Distinguish statistical evidence from practical importance, state the most consequential limitations, and suggest one sensible next step. Avoid causal claims unless the study design supports them.**
+> Will answer in final project when we have all findings completed. 
 
 ## Data and code
 
-- **Data:** Replace with a working source link or citation and any brief acquisition note needed to reproduce the project.
-- **Repository:** Replace with your repository URL.
+- **Data:** Zhang, C. (2024). [Social Anxiety Dataset](https://www.kaggle.com/datasets/natezhang123/social-anxiety-dataset/data). Kaggle.
+- **Repository:** https://github.com/Hiram-Lopez21/STAT-330-Project
 - [AI-use record](ai-use.qmd)
 - **Other sources:** Cite package documentation, articles, code, and other sources that materially informed the work.

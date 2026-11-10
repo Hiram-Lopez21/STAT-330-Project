@@ -1,44 +1,56 @@
 ---
 title: "AI Use and Verification"
 description: "A concise record of AI-supported work on this project."
-author: "Replace with all group members' names"
+author: "Nada Amer, Hiram Lopez Mendoza, and Lucero Otero"
 ---
 
 This page is a work log, not a second report. Short bullets are welcome. It is separate from the final case study and does not count toward the 750 to 1,000 word range.
 
 ## Starting point
 
-**AI system and date:** Replace.
+**AI system and date:** ChatGPT November 3rd, 2026.
 
 **Before using AI for the required extension, briefly state your question, course-based core model, baseline result, and the specific limitation or opportunity you wanted to address.**
+
+This statistical analysis of social anxiety data, seeks to answer the research question: How is a person’s lifestyle behaviors related to the intensity of their social anxiety level? To answer this questions we ran a multiple regression analysis with social anxiety levels as the response variable representing social anxiety level and sleep hours, physical activity, caffeine intake, alcohol consumption, and diet quality as the predictor variables representing lifestyle behaviors. Based on our preliminary results, holding all other predictors constant, sleep hours, physical activity, and diet quality were negatively associated, while caffeine intake and alcohol consumption were positively associated with social anxiety levels. One potential limitation is multicollinearity between predictor variables alcohol consumption and diet quality, as well as between caffeine intake and sleep hours.
 
 ## Substantive prompts
 
 Paste the exact prompts that shaped the extension. Include the customized extension-selection prompt from the checkpoint and any important implementation follow-ups. Delete unused prompt blocks.
 
-> Replace with an exact prompt.
+> I am creating a regression case study in R and Quarto. My question is How is a person’s lifestyle behaviors related to the intensity of their social anxiety level?. The response is Anxiety levels in discrete format from 1 to 10, the main predictors are sleep hours (time period not specified, continuous, observed ranges from 2.3 up to 11.300), physical activity (hours a week, continuous, observed ranges from 0 up to 10.100), caffeine intake (mg/day, continuous, observed ranges from 0 up to 599), alcohol consumption (drinks a week, discrete, observed ranges from 0 up to 19), and diet quality (discrete, from 1 to 10), and my course-based core model is a multiple regression analysis. My main result so far is that holding all other predictors constant, sleep hours, physical activity, and diet quality were negatively associated, while caffeine intake and alcohol consumption were positively associated with social anxiety levels. I found this limitation or opportunity: One potential limitation is multicollinearity between predictor variables alcohol consumption and diet quality, as well as between caffeine intake and sleep hours. Suggest three feasible extensions that keep the core analysis connected to regression methods taught in my class. One option may be a model not taught in class used as a comparator, such as a tree-based model, evaluated against the core course-based model using the same outcome and a suitable metric. Other options include a missing-data method that enables or tests the sensitivity of the core regression analysis; an interactive visualization or small application that communicates the core model’s results; a meaningful model-interpretability feature applied to a model used in the case study; or another one that would strengthens the course-based analysis. For each, explain how it strengthens the same research question, how its result would enter the final case study, the implementation steps, and two ways I could verify it. Do not choose for me.
 
-> Replace with another exact prompt, if needed.
+> In class we have already learned about VIFs and how to calculate those. And I also wanted to mention that the course covers these areas: Multicollinearity and regression diagnostics, Interactions, transformations, and nonlinear predictors, Model selection and shrinkage methods, Cross-validation and predictive performance, Logistic regression. Perhaps you could tell me if you want to adapt your suggestions or change them. Because the first one and the second one seem to be things that I've done or that I'm doing. The third one's good, and they are all good. But in my project, I am already going to use selection and shrinkage, and repeated cross-validation, and model comparison.
+
+> For Ordinal logistic regression, Would explain how it strengthens the same research question, how its result would enter the final case study, the implementation steps, and two ways I could verify it. Do not choose for me.
 
 ## My decisions
 
 - **Accepted:** What useful advice did you use?
+  - The preferred extension is a sensitivity analysis that runs an ordinal logistic regression to determine whether treating our response variable as ordered categorical data would change our conclusions about the association between lifestyle behaviors and social anxiety levels.
 - **Changed:** What did you adapt to fit your data or goals?
+  - We requested an updated suggestion list based on topics learned in class, so that we could choose from a list of extensions that could stretched us beyond class content.
 - **Rejected or corrected:** What advice was unsuitable, unnecessary, or wrong?
+  - Multicollinearity diagnostics and sensitivity analysis, (redundant with Selection and Shrinkage)
+  - Investigate nonlinear relationships using polynomial regression, (learned in class)
+  - Interactive application, (this extension does not strengthen the model)
+  - Random forest and interpretation
 
-**Connection to the final case study:** Identify where the extension's method and result appear on the final page and how they strengthen the course-based analysis.
+**Connection to the final case study:** This sensitivity analysis would be placed right after finishing our cross-validation and we have fitted our final model. Our multiple linear regression would be strengthen by this extension because it addresses the likely case that out response variable of social anxiety level is not a discrete variable but an ordinal variable where intervals between 1 to 2 do not mean the same as the interval 9 to 10 for example. Throught this sensitivity analysis we could have a interpretation of our data considering this variable type and see if the conclusions would be similar or different from our multiple linear regression.
 
 ## Independent verification
 
-1. **Check and result:** Replace with an official source, diagnostic, simulation, manual calculation, comparison with a known method, or another suitable check.
-2. **Check and result:** Replace with a different check and what you learned.
+1.  **Check and result:** Proportional-odds assumption. Using ordinal::nominal_test() in r. Testing whether our assumption of association across cumulative thresholds holds. Results pending.
+2.  **Check and result:** Predicted-probability validation. Using predict() in r. Checking that probability rules are met. Results pending.
 
 Link or cite verification sources where appropriate. A second AI response does not count as independent verification.
 
 ## Remaining limitation
 
-**State one important uncertainty, failure mode, or limitation that remains.**
+**State one important uncertainty, failure mode, or limitation that remains.** The source of our data does not specify how social anxiety level was collected and therefore we cannot determine whether treating the response as a ordinal makes more sense than as a continuous variable.
 
 ## Other AI use, if any
 
 **Briefly disclose earlier debugging, proofreading, or other AI assistance. Write “None” if there was no other use.**
+
+Use of ChatGPT for proofreading, word suggestions, as well as understanding concepts.
